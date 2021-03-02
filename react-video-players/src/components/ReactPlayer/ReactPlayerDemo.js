@@ -5,14 +5,17 @@ const sources = {
   sintelTrailer: 'http://media.w3.org/2010/05/sintel/trailer.mp4',
   bunnyTrailer: 'http://media.w3.org/2010/05/bunny/trailer.mp4',
   bunnyMovie: 'http://media.w3.org/2010/05/bunny/movie.mp4',
-  test: 'http://media.w3.org/2010/05/video/movie_300.webm'
+  test: 'http://media.w3.org/2010/05/video/movie_300.webm',
+  youtube:'https://www.youtube.com/watch?v=AS8F3np9laQ&list=RDAS8F3np9laQ&start_radio=1',
+  localVideo: 'videoplayback.mp4'
 };
 class PlayerExample extends Component {
    constructor(props) {
     super(props)
   
     this.state = {
-      source: sources.bunnyMovie,
+      source: sources.localVideo,
+      previousProgress: null
     }
   }
 
@@ -23,6 +26,18 @@ class PlayerExample extends Component {
   }
   currentTime =() =>  {
    console.log(this.player.getCurrentTime()) 
+  }
+
+  handleProgress = (p) => {
+const {playedSeconds}= p;
+const previousPlayedSecond = this.state.previousProgress? this.state.previousProgress.playedSeconds: 0;
+const difference = playedSeconds-previousPlayedSecond;
+const fps= (1/difference);
+console.log(fps)
+this.setState({
+  previousProgress: p,
+})
+
   }
   
  render() {
@@ -36,8 +51,10 @@ class PlayerExample extends Component {
           url={this.state.source}
           muted={false}
           playing={true}
+          progressInterval={42}
         width="640px"
         height="360px"
+        onProgress= {this.handleProgress}
         />
         <div className="py-3">
           <button onClick={this.currentTime}>
