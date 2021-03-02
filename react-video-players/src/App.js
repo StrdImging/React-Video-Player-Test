@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import PlayerExample from './components/videoplayer/PlayerExample'
+import ReactPlayerDemo from './components/ReactPlayer/ReactPlayerDemo'
 
  class App extends Component {
   render() {
     return (
       <div className="App"> 
-        <PlayerExample/>
+        <ReactPlayerDemo/>
       </div>
     )
   }
