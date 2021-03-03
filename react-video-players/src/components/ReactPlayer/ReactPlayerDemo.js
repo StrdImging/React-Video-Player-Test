@@ -23,12 +23,13 @@ class PlayerExample extends Component {
     this.state = {
       source: sources.localVideo,
       previousProgress: null,
+      videoTime: undefined
     }
   }
 
   handleStateChange = (state) => {
     this.setState({
-      player: state
+      player: state,
     });
   }
   currentTime = () => {
@@ -38,40 +39,42 @@ class PlayerExample extends Component {
 
   handleProgress = (p) => {
     const { playedSeconds } = p;
+    console.log(playedSeconds, "second")
     const previousPlayedSecond = this.state.previousProgress ? this.state.previousProgress.playedSeconds : 0;
     const difference = playedSeconds - previousPlayedSecond;
     const fps = (1 / difference);
-    // console.log(fps)
     this.setState({
-      previousProgress: p,
+      videoTime: playedSeconds,
+      previousProgress: p
+
+    }, () => {
+      console.log(this.state.videoTime, "v")
     })
 
   }
 
   render() {
-
-    var videoTime = 50;      ///Get curret time from video in here and will relect the gps
-    var videoTimeInMiliSeconds = Math.round(videoTime) * (10 ** 3);
-    var givenTime = videoTimeInMiliSeconds + parseInt(startingTime);
-
+    var givenTime = Math.round(parseInt(this.state.videoTime)) * (1000) + parseInt(startingTime);
+    console.log(givenTime, "given")
     var filteredData = coordinateData[givenTime];
-
-    // console.log(givenTime);
+    console.log(filteredData, "filter")
 
     return (
       <div className="">
         <ReactPlayer
           ref={player => {
             this.player = player;
+
           }}
           controls={true}
           url={this.state.source}
-          muted={false}
+          muted={true}
           playing={true}
-          progressInterval={42}
+          progressInterval={1}
           width="640px"
           height="360px"
           onProgress={this.handleProgress}
+
         />
         <div className="py-3">
           <button onClick={this.currentTime}>
@@ -80,10 +83,10 @@ class PlayerExample extends Component {
         </div>
         <div>
           <p>
-            {filteredData['lat']}
+            {filteredData? filteredData['lat']: "not found"}
           </p>
           <p>
-            {filteredData['long']}
+            {filteredData? filteredData['long']: "not found"}
           </p>
         </div>
 
