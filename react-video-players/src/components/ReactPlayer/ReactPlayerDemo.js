@@ -5,6 +5,8 @@ import GpsData from './dataFromGps.json'
 
 const coordinateData = GpsData['coordinates'];
 const startingTime = Object.keys(coordinateData)[0];
+const allTimeValues = Object.keys(coordinateData);
+
 const sources = {
   sintelTrailer: 'http://media.w3.org/2010/05/sintel/trailer.mp4',
   bunnyTrailer: 'http://media.w3.org/2010/05/bunny/trailer.mp4',
@@ -54,9 +56,27 @@ class PlayerExample extends Component {
   }
 
   render() {
-    var givenTime = Math.round(parseInt(this.state.videoTime)) * (1000) + parseInt(startingTime);
+    var givenTime = parseInt(this.state.videoTime) * (1000) + parseInt(startingTime);
     console.log(givenTime, "given")
-    var filteredData = coordinateData[givenTime];
+
+    var lowTime = allTimeValues.filter((val) => parseInt(val) <= givenTime);
+    var highTime = allTimeValues.filter((val) => parseInt(val) > givenTime);
+
+    var filterTime = "";
+
+    if (lowTime !== [] && highTime !== []) {
+      var differenceLow = parseInt(givenTime) - parseInt(lowTime[lowTime.length - 1])
+      var differenceHigh = parseInt(givenTime) - parseInt(highTime[0])
+
+      filterTime = differenceLow < differenceHigh ? lowTime[lowTime.length - 1] : highTime[0];
+    } else if (lowTime !== []) {
+      filterTime = lowTime[lowTime.length - 1];
+    } else {
+      filterTime = highTime[0];
+    }
+
+    var filteredData = coordinateData[filterTime];
+
     console.log(filteredData, "filter")
 
     return (
@@ -83,10 +103,10 @@ class PlayerExample extends Component {
         </div>
         <div>
           <p>
-            {filteredData? filteredData['lat']: "not found"}
+            {filteredData ? filteredData['lat'] : "not found"}
           </p>
           <p>
-            {filteredData? filteredData['long']: "not found"}
+            {filteredData ? filteredData['long'] : "not found"}
           </p>
         </div>
 
